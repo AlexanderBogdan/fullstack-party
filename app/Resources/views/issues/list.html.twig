@@ -1,0 +1,127 @@
+{% extends 'issues/base_with_header.html.twig' %}
+
+
+
+{% block bodyClass %}{{ parent() }} page-issues{% endblock %}
+
+{% set state = app.request.attributes.get('_route_params')['state'] %}
+{% set page =  app.request.attributes.get('_route_params')['page'] %}
+
+{% block content %}
+    <div class="clearfix">
+        <div class="col-6 issues-block">
+            <div class="issues-head">
+            {% if data[0] is defined %}
+                {% if state == 'open' %}
+                    <span class="open active">
+                {% else %}
+                    <a href="{{ path('issues',{'state': 'open'}) }}" class="open">
+                {% endif %}
+                {{ data[0]['open_issues'] }} Open
+                {% if state == 'open' %}
+                    </span>
+                {% else %}
+                    </a>
+                {% endif %}
+
+                {% if state == 'closed' %}
+                    <span class="closed active">
+                {% else %}
+                    <a href="{{ path('issues',{'state': 'closed'}) }}" class="closed">
+                {% endif %}
+                {{ data[0]['closed_issues'] }} Closed
+                {% if state == 'closed' %}
+                    </span>
+                {% else %}
+                    </a>
+                {% endif %}
+
+            {% endif %}
+            </div>
+
+            <div class="issues-wrap">
+
+                {% for issue in data %}
+                    <div class="issue-card">
+                        <div class="clearfix">
+                            <h3><a href="{{ path('issue', {'number': issue.id }) }}">{{ issue.title }}</a>
+                                {% for label in issue.labels %}
+                                    <span class="label" style="background-color: #{{ label.color }}">{{ label.name }}</span>
+                                {% endfor %}
+                            </h3>
+                            <div class="questions">
+                                {{ issue.comments }}
+                            </div>
+                        </div>
+                        <p>#{{ issue.number }} opened {{ issue.created_at }} ago by <a href="{{ issue.html_url }}" target="_blank" class="open_by">{{ issue.assignee }}</a></p>
+                    </div>
+                {% endfor %}
+
+
+            </div>
+
+
+            {% set openIssues = data[0]['open_issues'] / issues_per_page %}
+            {% set closedIssues = data[0]['closed_issues'] / issues_per_page %}
+
+            {% if state == 'open' %}
+                {% set totalPages = openIssues|round %}
+            {% else %}
+                {% set totalPages = closedIssues|round %}
+            {% endif %}
+
+            {% if totalPages > 0 %}
+                <div class="pagination clearfix">
+                <ul>
+                {% set prev = (page - 1) %}
+                {% set next = (page + 1) %}
+
+                {% if page > 1 %}
+                    <li class="previous"><a href="{{ path('issues', {  'state': state , 'page': prev }) }}">Previous</a></li>
+                {% else %}
+                    <li class="active previous"><a>Previous</a></li>
+                {% endif %}
+
+                {% for i in range(1, totalPages) %}
+                    {% if page == i %}
+                        <li class="active page"><a>{{ i }}</a></li>
+                    {% else %}
+                        <li class="page"><a href="{{ path('issues', {  'state': state, 'page': i }) }}">{{ i }}</a></li>
+                    {% endif %}
+
+                    {% if i % 17 == 0 and i > 102 or i < 102 and i % 20 == 0 %}
+                        {% if page < totalPages %}
+                            <li class="next"><a href="{{ path('issues', {  'state': state,  'page': next }) }}">Next</a></li>
+                        {% else %}
+                            <li class="active next"><a>Next</a></li>
+                        {% endif %}
+
+                        </ul></div><div class="pagination"><ul>
+
+                        {% if page > 1 %}
+                            <li class="previous"><a href="{{ path('issues', {  'state': state,  'page': prev }) }}">Previous</a></li>
+                        {% else %}
+                            <li class="active previous"><a>Previous</a></li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if page < totalPages %}
+                    <li class="next"><a href="{{ path('issues', {  'state': state , 'page': next }) }}">Next</a></li>
+                {% else %}
+                    <li class="active next"><a>Next</a></li>
+                {% endif %}
+                </ul>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-6 img-block">
+            <div class="table">
+                <div class="table-cell">
+                    <h1>Full Stack Developer Task</h1>
+                    <p>by <img src="{{ asset('assets/images/logotype-small.png') }}" alt="Testio"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

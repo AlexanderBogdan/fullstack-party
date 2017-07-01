@@ -1,0 +1,47 @@
+{% extends 'issues/base_with_header.html.twig' %}
+
+{% block bodyClass %}{{ parent() }} page-issue{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="head-issue">
+            <a class="back-link" href="{{ app.request.headers.get('referer') }}">Back to Issues</a>
+        </div>
+
+        <div class="issue-block-full">
+            <div class="issue-card-full">
+                <h1>{{ data.title }} <span class="id">#{{ data.id }}</span></h1>
+
+                <p>
+                    {% if data.state == 'open' %}
+                        <span class="state open">open</span>
+                    {% else %}
+                        <span class="state closed">closed</span>
+                    {% endif %}
+
+                    <span class="description"> <a href="{{ data.html_url }}" target="_blank" class="open_by">{{ data.assignee }}</a> opened this issue {{ data.created_at }} ago  · {{ data.comments }} comments </span>
+                </p>
+
+            </div>
+
+            {% if data.comment is defined %}
+                {% for comment in data.comment %}
+                    <div class="issue-comment">
+                        <div class="avatar">
+                            <img src="{{ comment.comment_avatar }}" alt="">
+                        </div>
+                        <div class="issue-descr">
+                            <div class="head-issue-title">
+                                <a href="{{ comment.html_url }}" target="_blank" class="open_by">{{ comment.comment_user }}</a> commented {{ comment.created_at }} ago
+                            </div>
+                            <div class="head-issue-body">
+                                {{ comment.comment_body }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

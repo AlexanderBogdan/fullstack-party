@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block bodyClass %}login-page{% endblock %}
+
+{% block body %}
+    <div class="table">
+        <div class="table-cell login-wrap">
+            <div class="logo">
+                <img src="{{ asset('assets/images/logotype-testio.png') }}" alt="Testio">
+            </div>
+            <a class="btn btn-green" href="{{ path('login') }}">{{ 'Login With GitHub' }}</a>
+        </div>
+    </div>
+{% endblock %}

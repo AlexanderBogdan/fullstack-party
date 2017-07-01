@@ -1,0 +1,9 @@
+services:
+    app.issues.manager:
+        class: AppBundle\Service\IssueManager
+
+    app.githib.api.client:
+        class: AppBundle\Service\GithubApiClient
+        arguments: [ "@app.issues.manager", "@session" ]
+        calls:
+          - [setContainer, ['@service_container']]
